@@ -88,18 +88,18 @@ jobs:
           path: ThunderTools
           ref: R4.4.3
 
-      - name: Checkout entservices-infra
+      - name: Checkout entservices-resourcemanager
         if: ${{ inputs.caller_source == 'local' }}
         uses: actions/checkout@v3
         with:
-          path: entservices-infra
+          path: entservices-resourcemanager
 
-      - name: Checkout entservices-infra-testframework
+      - name: Checkout entservices-resourcemanager-testframework
         if: ${{ inputs.caller_source == 'testframework' }}
         uses: actions/checkout@v3
         with:
-          repository: rdkcentral/entservices-infra
-          path: entservices-infra
+          repository: rdkcentral/entservices-resourcemanager
+          path: entservices-resourcemanager
           ref: develop
 
       - name: Checkout entservices-deviceanddisplay
@@ -134,8 +134,8 @@ jobs:
           git remote add origin https://code.rdkcentral.com/r/components/opensource/westeros
           git config core.sparseCheckout true
           git pull --depth=1 origin master
-          mkdir -p $GITHUB_WORKSPACE/entservices-infra/ResourceManager
-          cp essos/essos-resmgr.h $GITHUB_WORKSPACE/entservices-infra/ResourceManager/
+          mkdir -p $GITHUB_WORKSPACE/entservices-resourcemanager/ResourceManager
+          cp essos/essos-resmgr.h $GITHUB_WORKSPACE/entservices-resourcemanager/ResourceManager/
 
       - name: Apply patches ThunderTools
         run: |  
@@ -415,16 +415,15 @@ jobs:
           &&
           cmake --install build/entservices-deviceanddisplay
 
-      - name: Build entservices-infra
+      - name: Build entservices-resourcemanager
         run: >
           cmake
-          -S "$GITHUB_WORKSPACE/entservices-infra"
-          -B build/entservices-infra
+          -S "$GITHUB_WORKSPACE/entservices-resourcemanager"
+          -B build/entservices-resourcemanager
           -DCMAKE_TOOLCHAIN_FILE="${{ env.TOOLCHAIN_FILE }}"
           -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/install/usr"
           -DCMAKE_MODULE_PATH="$GITHUB_WORKSPACE/install/tools/cmake"
           -DHIDE_NON_EXTERNAL_SYMBOLS=OFF
-          -DPLUGIN_CLOUDSTORE_URI="localhost:50051"
           -DCMAKE_CXX_FLAGS="
           -DEXCEPTIONS_ENABLE=ON
           -fprofile-arcs
@@ -491,31 +490,16 @@ jobs:
           -DCMAKE_DISABLE_FIND_PACKAGE_Udev=ON
           -DCMAKE_DISABLE_FIND_PACKAGE_RFC=ON
           -DCMAKE_DISABLE_FIND_PACKAGE_RBus=ON
-          -DPLUGIN_MIGRATION=ON
-          -DPLUGIN_TELEMETRY=ON
-          -DPLUGIN_USERSETTINGS=ON
-          -DPLUGIN_PERSISTENTSTORE=ON
-          -DPLUGIN_SHAREDSTORAGE=ON
           -DPLUGIN_RESOURCEMANAGER=ON
-          -DPLUGIN_CLOUDSTORE=ON
-          -DPLUGIN_USBDEVICE=ON
-          -DPLUGIN_USB_MASS_STORAGE=ON
-          -DPLUGIN_LIFECYCLEMANAGER=OFF
-          -DPLUGIN_APPMANAGER=OFF
-          -DPLUGIN_ANALYTICS=ON
-          -DPLUGIN_ANALYTICS_BACKEND_LIBRARY_NAME="libWPEFrameworkAnalyticsBackendMock.so"
-          -DPLUGIN_ANALYTICS_EVENTS_MAP="/tmp/AnalyticsEventsMap.json"
           -DUSE_THUNDER_R4=ON
           -DPLUGIN_L2Tests=ON
           -DRDK_SERVICE_L2_TEST=ON
-          -DPLUGIN_STORAGE_MANAGER=ON
-          -DPLUGIN_OCICONTAINER=ON
           -DDS_FOUND=ON
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           &&
-          cmake --build build/entservices-infra -j6
+          cmake --build build/entservices-resourcemanager -j6
           &&
-          cmake --install build/entservices-infra
+          cmake --install build/entservices-resourcemanager
 
       - name: Build entservices-testframework
         run: >
@@ -578,23 +562,7 @@ jobs:
           -DCMAKE_DISABLE_FIND_PACKAGE_Udev=ON
           -DCMAKE_DISABLE_FIND_PACKAGE_RFC=ON
           -DCMAKE_DISABLE_FIND_PACKAGE_RBus=ON
-          -DPLUGIN_TELEMETRY=ON
-          -DPLUGIN_USERSETTINGS=ON
-          -DPLUGIN_PERSISTENTSTORE=ON
           -DPLUGIN_RESOURCEMANAGER=ON
-          -DPLUGIN_SHAREDSTORAGE=ON
-          -DPLUGIN_CLOUDSTORE=ON
-          -DPLUGIN_USBDEVICE=ON
-          -DPLUGIN_USB_MASS_STORAGE=ON
-          -DPLUGIN_ANALYTICS=ON
-          -DPLUGIN_ANALYTICS_BACKEND_LIBRARY_NAME="libWPEFrameworkAnalyticsBackendMock.so"
-          -DPLUGIN_ANALYTICS_EVENTS_MAP="/tmp/AnalyticsEventsMap.json"
-          -DPLUGIN_LIFECYCLEMANAGER=OFF
-          -DPLUGIN_APPMANAGER=OFF
-          -DPLUGIN_AVINPUT=OFF
-          -DPLUGIN_AVOUTPUT=OFF
-          -DAVOUTPUT_TV=OFF
-          -DPLUGIN_STORAGE_MANAGER=ON
           -DUSE_THUNDER_R4=ON
           -DPLUGIN_L2Tests=ON
           -DRDK_SERVICE_L2_TEST=ON
@@ -734,12 +702,12 @@ jobs:
           &&
           lcov -c
           -o coverage.info
-          -d build/entservices-infra
+          -d build/entservices-resourcemanager
           &&
           lcov
           -r coverage.info
           '/usr/include/*'
-          '*/build/entservices-infra/_deps/*'
+          '*/build/entservices-resourcemanager/_deps/*'
           '*/build/entservices-deviceanddisplay/_deps/*'
           '*/build/entservices-entservices-testframework/_deps/*'
           '*/install/usr/include/*'
@@ -754,7 +722,7 @@ jobs:
           &&
           genhtml
           -o coverage
-          -t "entservices-infra coverage"
+          -t "entservices-resourcemanager coverage"
           filtered_coverage.info
 
       - name: Upload artifacts
