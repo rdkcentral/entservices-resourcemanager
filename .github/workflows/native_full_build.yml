@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main, 'sprint/**', 'release/**', develop ]
   pull_request:
-    branches: [ main, 'sprint/**', 'release/**', topic/RDK*, develop ]
+    branches: [ main, 'sprint/**', 'release/**', topic/*, develop ]
 
 jobs:
   build-entservices-on-pr:
-    name: Build entservices-infra component in github rdkcentral
+    name: Build entservices-resourcemanager component in github rdkcentral
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/rdkcentral/docker-rdk-ci:latest
