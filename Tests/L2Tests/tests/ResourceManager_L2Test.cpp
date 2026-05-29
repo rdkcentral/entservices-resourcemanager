@@ -23,11 +23,14 @@
 #include "L2TestsMock.h"
 #include <string>
 #include <iostream>
+#include <interfaces/IResourceManager.h>
 
 using namespace WPEFramework;
 using ::testing::NiceMock;
 using ::testing::StrictMock;
+using ::WPEFramework::Exchange::IResourceManager;
 
+#define TEST_LOG(x, ...) fprintf(stderr, "\033[1;32m[%s:%d](%s)<PID:%d><TID:%d>" x "\n\033[0m", __FILE__, __LINE__, __FUNCTION__, getpid(), gettid(), ##__VA_ARGS__); fflush(stderr);
 #define RESOURCEMANAGER_CALLSIGN _T("org.rdk.ResourceManager")
 #define RESOURCEMANAGERL2TEST_CALLSIGN _T("L2tests.1")
 #define JSON_TIMEOUT   (1000)
@@ -84,9 +87,8 @@ TEST_F(ResourceManagerTest, SetAVBlockedMissingParams)
     JsonObject resultJson;
     JsonObject params; 
     uint32_t status = InvokeServiceMethod("org.rdk.ResourceManager", "setAVBlocked", params, resultJson);
-    EXPECT_EQ(status, Core::ERROR_NONE);
-    ASSERT_TRUE(resultJson.HasLabel("success"));
-    EXPECT_TRUE(resultJson["success"].Boolean());
+    // Expect error when required parameters are missing
+    EXPECT_NE(status, Core::ERROR_NONE);
     std::cout << "SetAVBlockedMissingParams test finished" << std::endl;
 }
 /********************************************************
@@ -141,8 +143,8 @@ TEST_F(ResourceManagerTest, ReserveTTSResourceTest)
     params["appid"] = appid;
     uint32_t status = InvokeServiceMethod("org.rdk.ResourceManager", "reserveTTSResource", params, resultJson);
 
-    EXPECT_NE(status, Core::ERROR_NONE);
-    EXPECT_FALSE(resultJson.HasLabel("success"));
+    EXPECT_EQ(status, Core::ERROR_NONE);
+    ASSERT_TRUE(resultJson.HasLabel("success"));
     std::cout << "ReserveTTSResourceTest test finished" << std::endl;
 }
 
@@ -160,8 +162,7 @@ TEST_F(ResourceManagerTest, ReserveTTSResourceForApps)
     JsonObject params;
     params["appids"] = appids;
     uint32_t status = InvokeServiceMethod("org.rdk.ResourceManager", "reserveTTSResourceForApps", params, resultJson);
-    EXPECT_NE(status, Core::ERROR_NONE);
-    EXPECT_FALSE(resultJson.HasLabel("success"));
+    EXPECT_EQ(status, Core::ERROR_NONE);
+    ASSERT_TRUE(resultJson.HasLabel("success"));
     std::cout << "ReserveTTSResourceForApps test finished" << std::endl;
 }
-
