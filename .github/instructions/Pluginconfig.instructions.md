@@ -1,49 +1,133 @@
 ---
+description: Repo-specific plugin configuration guidance for ResourceManager-style .conf.in and .config files.
 applyTo: "**/*.config,**/*.conf.in"
 ---
 
-### Plugin Configuration
+# Plugin Configuration Instructions (ResourceManager Pattern)
+
+### 1) Required Files and Roles
 
 ### Requirement
 
-- Each plugin must define <PluginName>.conf.in file that includes the following mandatory properties:
+Each plugin configuration flow in this repository uses two files:
 
-  - **autostart**: Indicates whether the plugin should start automatically when the framework boots. This should be set to false by default.
+- `<PluginName>.conf.in`: template consumed by build/config tooling.
+- `<PluginName>.config`: generated/maintained runtime configuration in map()/kv() style.
 
-  - **callsign**: A unique identifier used to reference the plugin within the framework. Every callsign must be defined with a prefix of org.rdk and it must be followed by the ENT Service name written in PascalCase (e.g., org.rdk.PersistentStore).
+For this plugin, both files must stay aligned on key values such as callsign, mode, and locator.
 
-  - **Custom properties**: Any additional configuration parameters required by the plugin. These are passed during activation via PluginHost::IShell::ConfigLine(). The following structural configuration elements are commonly defined:
-      - startuporder - Specifies the order in which plugins are started, relative to others.
-      - precondition - If these aren't met, the plugin stays in the Preconditions state and activates automatically once they are satisfied. It is recommended to define the precondition if the plugin depends on other subsystems being active.
-      - mode - Defines the execution mode of the plugin.
+### 2) Mandatory Fields
 
-### Plugin Mode Determination
+### Requirement
 
-If the plugin's mode is set to OFF, it is treated as in-process.
+Each plugin must define these properties:
 
-If no mode is specified, the plugin defaults to in-process.
+- autostart: Should reference the CMake variable and default to false in CMake cache.
 
-If the mode is explicitly set to LOCAL, the plugin runs out-of-process.
+- callsign: Must use org.rdk prefix and service name in PascalCase.
+  - ResourceManager value: org.rdk.ResourceManager.
 
-The plugin mode is configured in the plugin's CMakeLists.txt file.
+- precondition/preconditions: Declare required subsystems (ResourceManager uses Platform).
 
-- **locator** - Update with the name of the library (.so) that contains the actual plugin Implementation code.
+- startuporder: Optional; include only when configured.
 
-### Example
+- mode: Must be passed through from CMake variable.
 
-<PluginName>.conf.in
+- locator: Must point to backend implementation shared library using PLUGIN_IMPLEMENTATION.
 
-```
+### 3) Mode Determination
+
+### Requirement
+
+Mode behavior in this repo follows Thunder conventions and current plugin CMake defaults:
+
+- Off means in-process.
+- Unset mode defaults to in-process.
+- Local means out-of-process.
+
+Mode value is configured in plugin CMake through:
+
+PLUGIN_RESOURCE_MANAGER_MODE
+
+### 4) Required Root Configuration Shape
+
+### Requirement
+
+Both .conf.in and .config must define a root configuration object/map containing:
+
+- mode
+- locator
+
+For ResourceManager:
+
+- mode uses PLUGIN_RESOURCE_MANAGER_MODE
+- locator uses lib${PLUGIN_IMPLEMENTATION}.so
+
+### 5) ResourceManager Example (.conf.in)
+
+ResourceManager.conf.in
+
+```ini
 precondition = ["Platform"]
-callsign = "org.rdk.HdcpProfile"
-autostart = "@PLUGIN_HDCPPROFILE_AUTOSTART@"
-startuporder = "@PLUGIN_HDCPPROFILE_STARTUPORDER@"
+callsign = "org.rdk.ResourceManager"
+autostart = "@PLUGIN_RESOURCE_MANAGER_AUTOSTART@"
+startuporder = "@PLUGIN_RESOURCE_MANAGER_STARTUPORDER@"
 
 configuration = JSON()
 rootobject = JSON()
 
-rootobject.add("mode", "@PLUGIN_HDCPPROFILE_MODE@")
+rootobject.add("mode", "@PLUGIN_RESOURCE_MANAGER_MODE@")
 rootobject.add("locator", "lib@PLUGIN_IMPLEMENTATION@.so")
 
 configuration.add("root", rootobject)
 ```
+
+### 6) ResourceManager Example (.config)
+
+ResourceManager.config
+
+```cmake
+set (autostart ${PLUGIN_RESOURCE_MANAGER_AUTOSTART})
+set (preconditions Platform)
+set (callsign "org.rdk.ResourceManager")
+
+if(PLUGIN_RESOURCE_MANAGER_STARTUPORDER)
+set (startuporder ${PLUGIN_RESOURCE_MANAGER_STARTUPORDER})
+endif()
+
+map()
+    key(root)
+    map()
+        kv(mode ${PLUGIN_RESOURCE_MANAGER_MODE})
+        kv(locator lib${PLUGIN_IMPLEMENTATION}.so)
+    end()
+end()
+ans(configuration)
+```
+
+### 7) CMake Variable Contract
+
+### Requirement
+
+Plugin config files must be consistent with plugin CMake variables:
+
+- PLUGIN_RESOURCE_MANAGER_AUTOSTART
+- PLUGIN_RESOURCE_MANAGER_STARTUPORDER
+- PLUGIN_RESOURCE_MANAGER_MODE
+- PLUGIN_IMPLEMENTATION
+
+These are defined in plugin/CMakeLists.txt and consumed via write_config(PLUGIN_NAME).
+
+### 8) Validation Checklist
+
+### Requirement
+
+When updating any plugin config template in this repo, verify:
+
+- callsign format and value are correct.
+- precondition/preconditions includes Platform when required.
+- root.mode and root.locator are both present.
+- locator uses implementation library name, not front plugin library.
+- startuporder is optional and conditionally emitted in .config.
+- .conf.in placeholders and .config variables use matching names.
+
