@@ -102,8 +102,9 @@ macro(add_plugin_test plugin_name test_files)
 endmacro()
 
 # PLUGIN_RESOURCEMANAGER
-set (RESOURCEMANAGER_INC ${CMAKE_SOURCE_DIR}/plugin ${CMAKE_SOURCE_DIR}/helpers)
-add_plugin_test_ex(PLUGIN_RESOURCEMANAGER tests/test_ResourceManager.cpp "${RESOURCEMANAGER_INC}" "${NAMESPACE}ResourceManager")
+set (RESOURCEMANAGER_INC ${CMAKE_SOURCE_DIR}/../entservices-resourcemanager/plugin ${CMAKE_SOURCE_DIR}/../entservices-resourcemanager/helpers)
+set (RESOURCEMANAGER_LIBS ${NAMESPACE}ResourceManager ${NAMESPACE}ResourceManagerImplementation)
+add_plugin_test_ex(PLUGIN_RESOURCEMANAGER tests/test_ResourceManager.cpp "${RESOURCEMANAGER_INC}" "${RESOURCEMANAGER_LIBS}")
 
 add_library(${MODULE_NAME} SHARED ${TEST_SRC})
 
