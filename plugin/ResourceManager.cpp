@@ -21,6 +21,8 @@
 #include "Module.h"
 #include <interfaces/IResourceManager.h>
 #include <interfaces/json/JResourceManager.h>
+#include <cstdio>
+
 
 #define API_VERSION_NUMBER_MAJOR 1
 #define API_VERSION_NUMBER_MINOR 0
@@ -71,6 +73,8 @@ namespace WPEFramework
             ASSERT(0 == _connectionId);
 
             SYSLOG(Logging::Startup, (_T("ResourceManager::Initialize: PID=%u"), getpid()));
+            
+            std::printf("[resource implementation] Init %s \n");
 
             _service = service;
             _service->AddRef();

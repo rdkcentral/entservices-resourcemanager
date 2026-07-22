@@ -40,6 +40,9 @@ set_target_properties(${MODULE_NAME} PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED YES)
 
+target_compile_options(${MODULE_NAME} PRIVATE
+        -Wno-error=format)
+
 set_source_files_properties(ResourceManager.cpp PROPERTIES COMPILE_FLAGS "-fexceptions")
 
 target_link_libraries(${MODULE_NAME}
@@ -62,6 +65,9 @@ include_directories(
 set_target_properties(${PLUGIN_IMPLEMENTATION} PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES)
+
+target_compile_options(${PLUGIN_IMPLEMENTATION} PRIVATE
+        -Wno-error=format)
 
 set(RESOURCE_MANAGER_INCLUDES $ENV{RESOURCE_MANAGER_INCLUDES})
 separate_arguments(RESOURCE_MANAGER_INCLUDES)
