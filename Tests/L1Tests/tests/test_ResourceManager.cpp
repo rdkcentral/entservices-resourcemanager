@@ -46,8 +46,8 @@ public:
     TestableResourceManagerImplementation() = default;
     ~TestableResourceManagerImplementation() override = default;
 
-    void AddRef() const override {
-        Core::InterlockedIncrement(_refCount);
+    uint32_t AddRef() const override {
+        return Core::InterlockedIncrement(_refCount);
     }
 
     uint32_t Release() const override {
@@ -104,7 +104,7 @@ public:
     MOCK_METHOD(uint32_t, CreateToken, (const uint16_t length, const uint8_t buffer[], std::string& token), (override));
     MOCK_METHOD(PluginHost::ISecurity*, Officer, (const std::string& token), (override));
     MOCK_METHOD(uint32_t, Release, (), (const, override));
-    MOCK_METHOD(void, AddRef, (), (const, override));
+    MOCK_METHOD(uint32_t, AddRef, (), (const, override));
 
     BEGIN_INTERFACE_MAP(MockAuthenticate)
         INTERFACE_ENTRY(PluginHost::IAuthenticate)
