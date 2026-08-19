@@ -60,9 +60,12 @@ namespace WPEFramework {
         _instance = this;
 
 #ifdef ENABLE_ERM
+        LOGINFO("predebug erm enabled");
         mEssRMgr = EssRMgrCreate();
         std::cout << "EssRMgrCreate " << ((mEssRMgr != nullptr) ? "succeeded" : "failed") << std::endl;
-
+        if (mEssRMgr == nullptr)
+           LOGINFO("predebug ResourceManagerImplementation EssRMgrCreate failed");
+        }
         mDisableBlacklist = true;
         mDisableReserveTTS = true;
 
