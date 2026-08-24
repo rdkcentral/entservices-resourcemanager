@@ -19,7 +19,11 @@
 
 #pragma once
 
+#if defined(RDK_SERVICES_L1_TEST) || defined(RDK_SERVICE_L2_TEST)
+// L1/L2 test builds inject mock RFC symbols via compiler -include; avoid fallback header conflicts.
+#else
 #include "rfcapi.h"
+#endif
 
 namespace Utils {
 inline bool getRFCConfig(const char* paramName, RFC_ParamData_t& paramOutput)

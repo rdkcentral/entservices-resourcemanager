@@ -26,12 +26,10 @@
 #include <securityagent/SecurityTokenUtil.h>
 #endif
 
-// std
 #include <string>
 
 #define MAX_STRING_LENGTH 2048
-
-#define SERVER_DETAILS  "127.0.0.1:9998"
+#define SERVER_DETAILS "127.0.0.1:9998"
 
 using namespace WPEFramework;
 using namespace std;
@@ -40,7 +38,7 @@ namespace Utils
 {
     struct SecurityToken
     {
-        static void getSecurityToken(std::string &token)
+        static void getSecurityToken(std::string& token)
         {
             static std::string sToken = "";
             static bool sThunderSecurityChecked = false;
@@ -75,17 +73,17 @@ namespace Utils
             else
             {
                 LOGINFO("Retrieved token successfully");
-                token = (char *)buffer;
+                token = (char*)buffer;
                 sToken = token;
             }
 #endif
         }
 
 #ifndef DISABLE_SECURITY_TOKEN
-        static size_t writeCurlResponse(void *ptr, size_t size, size_t nmemb, string stream)
+        static size_t writeCurlResponse(void* ptr, size_t size, size_t nmemb, string stream)
         {
             size_t realsize = size * nmemb;
-            string temp(static_cast<const char *>(ptr), realsize);
+            string temp(static_cast<const char*>(ptr), realsize);
             stream.append(temp);
             return realsize;
         }
@@ -95,25 +93,24 @@ namespace Utils
             bool configured = false;
             long http_code = 0;
             std::string jsonResp;
-            CURL *curl_handle = NULL;
+            CURL* curl_handle = NULL;
             CURLcode res = CURLE_OK;
             curl_handle = curl_easy_init();
-            string serialNumber = "";
             string url = "http://127.0.0.1:9998/Service/Controller/Configuration/Controller";
             if (curl_handle &&
                 !curl_easy_setopt(curl_handle, CURLOPT_URL, url.c_str()) &&
                 !curl_easy_setopt(curl_handle, CURLOPT_HTTPGET, 1) &&
-                !curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1) && // when redirected, follow the redirections
+                !curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1) &&
                 !curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeCurlResponse) &&
                 !curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, &jsonResp))
             {
-
                 res = curl_easy_perform(curl_handle);
                 if (curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &http_code) != CURLE_OK)
                 {
                     std::cout << "curl_easy_getinfo failed\n";
                 }
-                std::cout << "Thunder Controller Configuration ret: " << res << " http response code: " << http_code << std::endl;
+                std::cout << "Thunder Controller Configuration ret: " << res
+                          << " http response code: " << http_code << std::endl;
                 curl_easy_cleanup(curl_handle);
             }
             else
@@ -122,7 +119,6 @@ namespace Utils
             }
             if ((res == CURLE_OK) && (http_code == 200))
             {
-                // check for "Security" in response
                 JsonObject responseJson = JsonObject(jsonResp);
                 if (responseJson.HasLabel("subsystems"))
                 {
@@ -141,19 +137,17 @@ namespace Utils
             return configured;
         }
 #endif
-  
     };
 
-    // Thunder Plugin Communication
-    std::shared_ptr<WPEFramework::JSONRPC::LinkType<WPEFramework::Core::JSON::IElement>> getThunderControllerClient(std::string callsign="")
+    std::shared_ptr<WPEFramework::JSONRPC::LinkType<WPEFramework::Core::JSON::IElement>> getThunderControllerClient(std::string callsign = "")
     {
-
         string token;
         Utils::SecurityToken::getSecurityToken(token);
         string query = "token=" + token;
 
         Core::SystemInfo::SetEnvironment(_T("THUNDER_ACCESS"), (_T(SERVER_DETAILS)));
-        std::shared_ptr<WPEFramework::JSONRPC::LinkType<WPEFramework::Core::JSON::IElement>> thunderClient = make_shared<WPEFramework::JSONRPC::LinkType<WPEFramework::Core::JSON::IElement>>(callsign.c_str(), "", false, query);
+        std::shared_ptr<WPEFramework::JSONRPC::LinkType<WPEFramework::Core::JSON::IElement>> thunderClient =
+            make_shared<WPEFramework::JSONRPC::LinkType<WPEFramework::Core::JSON::IElement>>(callsign.c_str(), "", false, query);
 
         return thunderClient;
     }
@@ -162,11 +156,11 @@ namespace Utils
     class Job : public Core::IDispatchType<void>
 #else
     class Job : public Core::IDispatch
-#endif /* USE_THUNDER_R4 */
+#endif
     {
     public:
         Job(std::function<void()> work)
-            : _work(work)
+            : _work(std::move(work))
         {
         }
         void Dispatch() override
@@ -178,7 +172,7 @@ namespace Utils
         std::function<void()> _work;
     };
 
-    uint32_t getServiceState(PluginHost::IShell *shell, const string &callsign, PluginHost::IShell::state &state)
+    uint32_t getServiceState(PluginHost::IShell* shell, const string& callsign, PluginHost::IShell::state& state)
     {
         uint32_t result;
         auto interface = shell->QueryInterfaceByCallsign<PluginHost::IShell>(callsign);
@@ -197,31 +191,29 @@ namespace Utils
         return result;
     }
 
-    uint32_t activatePlugin(PluginHost::IShell *shell, const string &callsign)
+    uint32_t activatePlugin(PluginHost::IShell* shell, const string& callsign)
     {
         uint32_t result = Core::ERROR_ASYNC_FAILED;
         Core::Event event(false, true);
 
 #ifndef USE_THUNDER_R4
-        Core::IWorkerPool::Instance().Submit(Core::ProxyType<Core::IDispatchType<void>>(Core::ProxyType<Job>::Create([&]()
-                                                                                                                     {
+        Core::IWorkerPool::Instance().Submit(Core::ProxyType<Core::IDispatchType<void>>(Core::ProxyType<Job>::Create([&]() {
 #else
-        Core::IWorkerPool::Instance().Submit(Core::ProxyType<Core::IDispatch>(Core::ProxyType<Job>::Create([&]()
-                                                                                                           {
-#endif /* USE_THUNDER_R4 */
-                    auto interface = shell->QueryInterfaceByCallsign<PluginHost::IShell>(callsign);
-                    if (interface == nullptr) {
-                        result = Core::ERROR_UNAVAILABLE;
-                        std::cout << "no IShell for " << callsign << std::endl;
-                    } else {
-                        result = interface->Activate(PluginHost::IShell::reason::REQUESTED);
-                        std::cout << "IShell activate status " << result << " for " << callsign << std::endl;
-                        interface->Release();
-                    }
-                    event.SetEvent(); })));
+        Core::IWorkerPool::Instance().Submit(Core::ProxyType<Core::IDispatch>(Core::ProxyType<Job>::Create([&]() {
+#endif
+            auto interface = shell->QueryInterfaceByCallsign<PluginHost::IShell>(callsign);
+            if (interface == nullptr) {
+                result = Core::ERROR_UNAVAILABLE;
+                std::cout << "no IShell for " << callsign << std::endl;
+            } else {
+                result = interface->Activate(PluginHost::IShell::reason::REQUESTED);
+                std::cout << "IShell activate status " << result << " for " << callsign << std::endl;
+                interface->Release();
+            }
+            event.SetEvent();
+        })));
 
         event.Lock();
         return result;
     }
-
 }
