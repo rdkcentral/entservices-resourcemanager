@@ -2,7 +2,7 @@
 
 ## Product Overview
 
-ResourceManager is a WPEFramework plugin that provides fine-grained media resource control for RDK-based devices. The plugin enables per-application AV output blocking and Text-to-Speech (TTS) resource reservation through the Essos Resource Manager (ERM), ensuring fair resource allocation across competing applications and preventing unauthorized media output.
+ResourceManager is a Thunder plugin that provides fine-grained media resource control for RDK-based devices. The plugin enables per-application AV output blocking and Text-to-Speech (TTS) resource reservation through the Essos Resource Manager (ERM), ensuring fair resource allocation across competing applications and preventing unauthorized media output.
 
 ## Key Features
 
@@ -139,7 +139,7 @@ Two independent RFC parameters control feature availability:
 ### External Dependencies
 - **libessosrmgr**: Essos Resource Manager library for hardware-level resource enforcement
 - **SecurityAgent**: RDK plugin providing security token generation
-- **WPEFramework**: Core plugin framework and JSONRPC infrastructure
+- **Thunder**: Core plugin framework and JSONRPC infrastructure
 
 ## Version Information
 

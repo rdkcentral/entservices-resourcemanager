@@ -2,7 +2,7 @@
 
 ## Overview
 
-The ResourceManager plugin is a WPEFramework (Thunder) plugin that provides centralized AV resource control and TTS (Text-to-Speech) resource reservation for RDK-based devices. It acts as a single gatekeeper for managing which applications are allowed AV output and which application holds the TTS resource, integrating with the Essos Resource Manager (ERM) library for hardware-level enforcement.
+The ResourceManager plugin is a Thunder plugin that provides centralized AV resource control and TTS (Text-to-Speech) resource reservation for RDK-based devices. It acts as a single gatekeeper for managing which applications are allowed AV output and which application holds the TTS resource, integrating with the Essos Resource Manager (ERM) library for hardware-level enforcement.
 
 ## System Architecture
 
@@ -88,7 +88,7 @@ Client → JSON-RPC reserveTTSResource(appid)
 
 ## Plugin Framework Integration
 
-### WPEFramework/Thunder Integration
+### Thunder/Thunder Integration
 
 - **IPlugin Interface**: Lifecycle managed via `Initialize` / `Deinitialize`
 - **JSONRPC**: Client-facing API exposed via Thunder controller; four methods registered at construction
@@ -111,7 +111,7 @@ ResourceManager (IPlugin, JSONRPC)
 
 | Dependency | Purpose |
 |---|---|
-| WPEFramework Plugins (`${NAMESPACE}Plugins`) | Plugin framework base, JSONRPC, IPlugin |
+| Thunder Plugins (`${NAMESPACE}Plugins`) | Plugin framework base, JSONRPC, IPlugin |
 | `libessosrmgr` (`-lessosrmgr`) | Essos Resource Manager hardware API |
 | `rfcapi.h` / `RFC_ParamData_t` | RFC feature flag query |
 | `SecurityAgent` (Thunder plugin) | Security token for authenticated calls |
