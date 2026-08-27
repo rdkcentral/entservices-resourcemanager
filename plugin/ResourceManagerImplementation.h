@@ -26,7 +26,7 @@
 #include "essos-resmgr.h"
 #endif
 
-namespace WPEFramework {
+namespace Thunder {
 namespace Plugin {
 
     class ResourceManagerImplementation : public Exchange::IResourceManager
@@ -65,4 +65,4 @@ namespace Plugin {
     };
 
 } // namespace Plugin
-} // namespace WPEFramework
+} // namespace Thunder

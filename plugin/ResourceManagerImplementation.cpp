@@ -37,7 +37,7 @@ static std::string sThunderSecurityToken;
 #define DBGINFO(fmt, ...)
 #endif
 
-namespace WPEFramework {
+namespace Thunder {
     namespace Plugin {
 
         SERVICE_REGISTRATION(ResourceManagerImplementation, 1, 0, 0);
@@ -221,11 +221,7 @@ namespace WPEFramework {
     private:
       uint32_t mId { 0 };
       std::string mCallSign { };
-#if ((THUNDER_VERSION >= 4) && (THUNDER_VERSION_MINOR == 4))
-      PluginHost::ILocalDispatcher * dispatcher_ {nullptr};
-#else
       PluginHost::IDispatcher * dispatcher_ {nullptr};
-#endif
 
       Core::ProxyType<Core::JSONRPC::Message> Message() const
       {
@@ -274,11 +270,7 @@ namespace WPEFramework {
         : mCallSign(callsign)
       {
         if (service)
-#if ((THUNDER_VERSION >= 4) && (THUNDER_VERSION_MINOR == 4))
-          dispatcher_ = service->QueryInterfaceByCallsign<PluginHost::ILocalDispatcher>(mCallSign);
-#else
           dispatcher_ = service->QueryInterfaceByCallsign<PluginHost::IDispatcher>(mCallSign);
-#endif
       }
   
       JSONRPCDirectLink(PluginHost::IShell* service)
@@ -308,17 +300,12 @@ namespace WPEFramework {
         ToMessage(parameters, message);
 
         const uint32_t channelId = ~0;
-#if ((THUNDER_VERSION >= 4) && (THUNDER_VERSION_MINOR == 4))
+        
         string output = "";
         uint32_t result = Core::ERROR_BAD_REQUEST;
 
         if (dispatcher_  != nullptr) {
-            PluginHost::ILocalDispatcher* localDispatcher = dispatcher_->Local();
-
-            ASSERT(localDispatcher != nullptr);
-
-            if (localDispatcher != nullptr)
-                result =  dispatcher_->Invoke(channelId, message->Id.Value(), sThunderSecurityToken, message->Designator.Value(), message->Parameters.Value(),output);
+            result =  dispatcher_->Invoke(channelId, message->Id.Value(), sThunderSecurityToken, message->Designator.Value(), message->Parameters.Value(),output);
         }
 
         if (message.IsValid() == true) {
@@ -345,23 +332,7 @@ namespace WPEFramework {
         {
             return Core::ERROR_GENERAL;
         }
-#elif (THUNDER_VERSION == 2)
-        auto resp =  dispatcher_->Invoke(sThunderSecurityToken, channelId, *message);
-#else
-        Core::JSONRPC::Context context(channelId, message->Id.Value(), sThunderSecurityToken) ;
-        auto resp = dispatcher_->Invoke(context, *message);
-#endif
 
-#if ((THUNDER_VERSION == 2) || (THUNDER_VERSION >= 4) && (THUNDER_VERSION_MINOR == 2))
-
-        if (resp->Error.IsSet()) {
-          std::cout << "Call failed: " << message->Designator.Value() << " error: " <<  resp->Error.Text.Value() << "\n";
-          return resp->Error.Code;
-        }
-
-        if (!FromMessage(response, resp, isResponseString))
-          return Core::ERROR_GENERAL;
-#endif
         return Core::ERROR_NONE;
       }
     };
@@ -545,4 +516,4 @@ namespace WPEFramework {
     }
 
     } // namespace Plugin
-} // namespace WPEFramework
+} // namespace Thunder

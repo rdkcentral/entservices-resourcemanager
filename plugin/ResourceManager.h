@@ -24,7 +24,7 @@
 #include <interfaces/json/JResourceManager.h>
 #include <interfaces/json/JsonData_ResourceManager.h>
 
-namespace WPEFramework
+namespace Thunder
 {
     namespace Plugin
     {
@@ -94,4 +94,4 @@ namespace WPEFramework
                 Core::Sink<Notification> _resourceManagerNotification;
         };
     } // namespace Plugin
-} // namespace WPEFramework
+} // namespace Thunder

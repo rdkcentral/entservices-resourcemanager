@@ -26,7 +26,7 @@
 #define API_VERSION_NUMBER_MINOR 0
 #define API_VERSION_NUMBER_PATCH 0
 
-namespace WPEFramework
+namespace Thunder
 {
     namespace Plugin
     {
@@ -43,7 +43,7 @@ namespace WPEFramework
         }
 
         /*
-         *Register ResourceManager module as wpeframework plugin
+         *Register ResourceManager module as thunder plugin
          */
         SERVICE_REGISTRATION(ResourceManager, API_VERSION_NUMBER_MAJOR, API_VERSION_NUMBER_MINOR, API_VERSION_NUMBER_PATCH);
 
@@ -80,7 +80,7 @@ namespace WPEFramework
 
             if (nullptr != _resourceManager)
             {
-                // Invoking Plugin API register to wpeframework
+                // Invoking Plugin API register to thunder
                 Exchange::JResourceManager::Register(*this, _resourceManager);
             }
             else
@@ -149,4 +149,4 @@ namespace WPEFramework
         }
 
     } // namespace Plugin
-} // namespace WPEFramework
+} // namespace Thunder

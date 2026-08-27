@@ -25,7 +25,7 @@
 #include <core/core.h>
 #include "ThunderPortability.h"
 
-using namespace WPEFramework;
+using namespace Thunder;
 using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::_;
