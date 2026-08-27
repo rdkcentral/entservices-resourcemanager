@@ -64,7 +64,7 @@ For this repo pattern, the backend implementation class may also be registered s
 ### Example
 
 ```cpp
-namespace WPEFramework {
+namespace Thunder {
     namespace Plugin {
         namespace {
             static Metadata<ResourceManager> metadata(

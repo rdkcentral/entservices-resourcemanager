@@ -74,7 +74,7 @@ When obtaining interfaces/pointers to external plugins/services:
 ### Correct Example
 
 ```cpp
-auto other = _service->QueryInterfaceByCallsign<WPEFramework::Exchange::IOtherPlugin>("org.rdk.OtherPlugin");
+auto other = _service->QueryInterfaceByCallsign<Thunder::Exchange::IOtherPlugin>("org.rdk.OtherPlugin");
 if (other != nullptr) {
     other->PerformAction();
     other->Release();
@@ -85,7 +85,7 @@ if (other != nullptr) {
 
 ```cpp
 void MyPlugin::Initialize() {
-    _otherPlugin = _service->QueryInterfaceByCallsign<WPEFramework::Exchange::IOtherPlugin>("org.rdk.OtherPlugin");
+    _otherPlugin = _service->QueryInterfaceByCallsign<Thunder::Exchange::IOtherPlugin>("org.rdk.OtherPlugin");
 }
 
 void MyPlugin::DoSomething() {

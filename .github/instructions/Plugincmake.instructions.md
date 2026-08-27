@@ -55,16 +55,16 @@ target_link_libraries(${MODULE_NAME}
 ### Incorrect Example
 
 ```cmake
-set(MODULE_NAME WPEFramework${PLUGIN_NAME})
+set(MODULE_NAME Thunder${PLUGIN_NAME})
 
-find_package(WPEFrameworkPlugins REQUIRED)
-find_package(WPEFrameworkDefinitions REQUIRED)
+find_package(ThunderPlugins REQUIRED)
+find_package(ThunderDefinitions REQUIRED)
 
 target_link_libraries(${MODULE_NAME} 
     PRIVATE
     CompileSettingsDebug::CompileSettingsDebug
-    WPEFrameworkPlugins::WPEFrameworkPlugins
-    WPEFrameworkDefinitions::WPEFrameworkDefinitions)
+    ThunderPlugins::ThunderPlugins
+    ThunderDefinitions::ThunderDefinitions)
 ```
 
 ### 3) Required Packages and Linking
@@ -157,7 +157,7 @@ Install both shared libraries with `install(TARGETS ...)` to the plugins destina
 
 ### Requirement
 
-This instruction is primarily for plugin-level CMake updates. The repository root [CMakeLists.txt](../../CMakeLists.txt) still contains legacy `WPEFramework` package/config naming for project bootstrap and packaging variables.
+This instruction is primarily for plugin-level CMake updates. The repository root [CMakeLists.txt](../../CMakeLists.txt) still contains legacy `Thunder` package/config naming for project bootstrap and packaging variables.
 
 Do not refactor those top-level legacy names unless explicitly requested as a dedicated migration task.
 
