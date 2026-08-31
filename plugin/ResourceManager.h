@@ -91,7 +91,7 @@ namespace Thunder
                 PluginHost::IShell* _service{};
                 uint32_t _connectionId{};
                 Exchange::IResourceManager* _resourceManager{};
-                Core::Sink<Notification> _resourceManagerNotification;
+                Core::SinkType<Notification> _resourceManagerNotification;
         };
     } // namespace Plugin
 } // namespace Thunder
