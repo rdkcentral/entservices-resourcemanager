@@ -96,7 +96,14 @@ cmake -G Ninja -S entservices-apis  -B build/entservices-apis \
 
 cmake --build build/entservices-apis --target install
 
-
+############################
+# Create stub essosrmgr library for linking
+echo "======================================================================================"
+echo "Creating stub essosrmgr library"
+mkdir -p "$GITHUB_WORKSPACE/install/usr/lib"
+echo "" | gcc -shared -o "$GITHUB_WORKSPACE/install/usr/lib/essosrmgr.so" -x c -
+ls -la "$GITHUB_WORKSPACE/install/usr/lib/essosrmgr.so"
+echo "======================================================================================"
 
 ############################
 # Generate minimal external headers for ResourceManager/L1 test builds
