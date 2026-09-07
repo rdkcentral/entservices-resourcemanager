@@ -90,33 +90,17 @@ if (RDK_SERVICES_L1_TEST OR RDK_SERVICE_L2_TEST)
             ${NAMESPACE}Plugins::${NAMESPACE}Plugins
             ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
 else()
-    # Try to find essosrmgr library, only link if it exists
-    find_library(ESSOSRMGR_LIBRARIES NAMES essosrmgr)
-    if(ESSOSRMGR_LIBRARIES)
-        message(STATUS "Found essosrmgr library: ${ESSOSRMGR_LIBRARIES}")
-        target_link_libraries(${PLUGIN_IMPLEMENTATION}
-            PRIVATE
-                CompileSettingsDebug::CompileSettingsDebug
-                ${NAMESPACE}Plugins::${NAMESPACE}Plugins
-                ${ESSOSRMGR_LIBRARIES}
-                ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
-    else()
-        message(STATUS "essosrmgr library not found, linking without it")
-        target_link_libraries(${PLUGIN_IMPLEMENTATION}
-            PRIVATE
-                CompileSettingsDebug::CompileSettingsDebug
-                ${NAMESPACE}Plugins::${NAMESPACE}Plugins
-                ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
-    endif()
+    target_link_libraries(${PLUGIN_IMPLEMENTATION}
+        PRIVATE
+            CompileSettingsDebug::CompileSettingsDebug
+            ${NAMESPACE}Plugins::${NAMESPACE}Plugins
+            -lessosrmgr
+            ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
 endif()
 
 if(BUILD_ENABLE_ERM)
     target_compile_definitions(${PLUGIN_IMPLEMENTATION} PRIVATE ENABLE_ERM)
-    # Only link essosrmgr if it exists
-    find_library(BUILD_ESSOSRMGR_LIBRARIES NAMES essosrmgr)
-    if(BUILD_ESSOSRMGR_LIBRARIES)
-        target_link_libraries(${PLUGIN_IMPLEMENTATION} PRIVATE ${BUILD_ESSOSRMGR_LIBRARIES})
-    endif()
+    target_link_libraries(${PLUGIN_IMPLEMENTATION} PRIVATE essosrmgr)
 endif()
 
 find_library(RFC_LIBRARIES NAMES rfcapi)
