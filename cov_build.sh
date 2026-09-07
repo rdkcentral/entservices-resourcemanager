@@ -21,7 +21,6 @@ cmake -G Ninja -S "$GITHUB_WORKSPACE" -B build/entservices-resourcemanager \
 -DRDK_SERVICES_COVERITY=ON \
 -DRDK_SERVICE_L2_TEST=OFF \
 -DPLUGIN_RESOURCEMANAGER=ON \
--DBUILD_ENABLE_ERM=ON \
 -DCMAKE_CXX_FLAGS="-DEXCEPTIONS_ENABLE=ON \
 -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers \
 -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers/rdk/iarmbus \
