@@ -22,7 +22,7 @@ cmake -G Ninja -S "$GITHUB_WORKSPACE" -B build/entservices-resourcemanager \
 -DRDK_SERVICE_L2_TEST=OFF \
 -DPLUGIN_RESOURCEMANAGER=ON \
 -DBUILD_ENABLE_ERM=ON \
--DCMAKE_SHARED_LINKER_FLAGS="-Wl,--allow-shlib-undefined" \
+-DCMAKE_SHARED_LINKER_FLAGS="-Wl,--unresolved-symbols=ignore-all"
 -DCMAKE_CXX_FLAGS="-DEXCEPTIONS_ENABLE=ON \
 -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers \
 -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers/rdk/iarmbus \
