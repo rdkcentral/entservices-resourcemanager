@@ -112,7 +112,11 @@ endif()
 
 if(BUILD_ENABLE_ERM)
     target_compile_definitions(${PLUGIN_IMPLEMENTATION} PRIVATE ENABLE_ERM)
-    target_link_libraries(${PLUGIN_IMPLEMENTATION} PRIVATE essosrmgr)
+    # Only link essosrmgr if it exists
+    find_library(BUILD_ESSOSRMGR_LIBRARIES NAMES essosrmgr)
+    if(BUILD_ESSOSRMGR_LIBRARIES)
+        target_link_libraries(${PLUGIN_IMPLEMENTATION} PRIVATE ${BUILD_ESSOSRMGR_LIBRARIES})
+    endif()
 endif()
 
 find_library(RFC_LIBRARIES NAMES rfcapi)
