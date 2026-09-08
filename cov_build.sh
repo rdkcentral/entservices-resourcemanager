@@ -24,7 +24,7 @@ cmake -G Ninja -S "$GITHUB_WORKSPACE" -B build/entservices-resourcemanager \
 -DRDK_SERVICE_L2_TEST=OFF \
 -DPLUGIN_RESOURCEMANAGER=ON \
 -DBUILD_ENABLE_ERM=ON \
--DCMAKE_SHARED_LINKER_FLAGS="-Wl,--unresolved-symbols=ignore-all" \
+-DCMAKE_SHARED_LINKER_FLAGS="-L${GITHUB_WORKSPACE}/install/usr/lib -Wl,--unresolved-symbols=ignore-all" \
 -DCMAKE_CXX_FLAGS="-DEXCEPTIONS_ENABLE=ON -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers/rdk/iarmbus -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/mocks -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/mocks/thunder -Wall -Werror -Wno-error=format -Wl,-wrap,system -Wl,-wrap,popen -Wl,-wrap,syslog -DDISABLE_SECURITY_TOKEN -DTHUNDER_VERSION=4 -DTHUNDER_VERSION_MAJOR=4 -DTHUNDER_VERSION_MINOR=4" \
 
 
