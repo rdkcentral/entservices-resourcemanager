@@ -97,12 +97,25 @@ cmake -G Ninja -S entservices-apis  -B build/entservices-apis \
 cmake --build build/entservices-apis --target install
 
 ############################
-# Create stub essosrmgr library for linking
+# Create stub essosrmgr library only if it doesn't exist
 echo "======================================================================================"
-echo "Creating stub essosrmgr library"
-mkdir -p "$GITHUB_WORKSPACE/install/usr/lib"
-echo "" | gcc -shared -o "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so" -x c -
-ls -la "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
+echo "Checking for essosrmgr library..."
+if ! ldconfig -p 2>/dev/null | grep -q libessosrmgr; then
+    echo "essosrmgr library not found, creating stub"
+    
+    # Create stub in /usr/lib (default linker search path for native builds)
+    echo "" | gcc -shared -o /usr/lib/libessosrmgr.so -x c -
+    ldconfig  # Update linker cache
+    echo "Stub created at /usr/lib/libessosrmgr.so"
+    
+    # Also copy to workspace prefix for consistency
+    mkdir -p "$GITHUB_WORKSPACE/install/usr/lib"
+    cp /usr/lib/libessosrmgr.so "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
+    
+    ls -la /usr/lib/libessosrmgr.so "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
+else
+    echo "essosrmgr library already found in linker cache, skipping stub creation"
+fi
 echo "======================================================================================"
 
 ############################
