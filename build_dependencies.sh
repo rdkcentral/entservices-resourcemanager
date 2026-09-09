@@ -101,8 +101,8 @@ cmake --build build/entservices-apis --target install
 echo "======================================================================================"
 echo "Creating stub essosrmgr library"
 mkdir -p "$GITHUB_WORKSPACE/install/usr/lib"
-echo "" | gcc -shared -o "$GITHUB_WORKSPACE/install/usr/lib/essosrmgr.so" -x c -
-ls -la "$GITHUB_WORKSPACE/install/usr/lib/essosrmgr.so"
+echo "" | gcc -shared -o "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so" -x c -
+ls -la "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
 echo "======================================================================================"
 
 ############################
