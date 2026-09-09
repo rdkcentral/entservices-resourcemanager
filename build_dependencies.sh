@@ -103,12 +103,10 @@ echo "Checking for essosrmgr library..."
 if ! ldconfig -p 2>/dev/null | grep -q libessosrmgr; then
     echo "essosrmgr library not found, creating stub"
     
-    # Create stub in /usr/lib (default linker search path for native builds)
     echo "" | gcc -shared -o /usr/lib/libessosrmgr.so -x c -
-    ldconfig  # Update linker cache
+    ldconfig 
     echo "Stub created at /usr/lib/libessosrmgr.so"
     
-    # Also copy to workspace prefix for consistency
     mkdir -p "$GITHUB_WORKSPACE/install/usr/lib"
     cp /usr/lib/libessosrmgr.so "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
     
