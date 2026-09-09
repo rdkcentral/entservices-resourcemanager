@@ -13,8 +13,6 @@ cmake -G Ninja -S "$GITHUB_WORKSPACE" -B build/entservices-resourcemanager \
 -DUSE_THUNDER_R4=ON \
 -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/install/usr" \
 -DCMAKE_MODULE_PATH="$GITHUB_WORKSPACE/install/tools/cmake" \
--DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install/usr" \
--DCMAKE_LIBRARY_PATH="$GITHUB_WORKSPACE/install/usr/lib" \
 -DCMAKE_VERBOSE_MAKEFILE=ON \
 -DCMAKE_DISABLE_FIND_PACKAGE_IARMBus=ON \
 -DCMAKE_DISABLE_FIND_PACKAGE_RFC=ON \
@@ -24,9 +22,14 @@ cmake -G Ninja -S "$GITHUB_WORKSPACE" -B build/entservices-resourcemanager \
 -DRDK_SERVICE_L2_TEST=OFF \
 -DPLUGIN_RESOURCEMANAGER=ON \
 -DBUILD_ENABLE_ERM=ON \
--DCMAKE_SHARED_LINKER_FLAGS="-L${GITHUB_WORKSPACE}/install/usr/lib -Wl,--unresolved-symbols=ignore-all" \
--DCMAKE_CXX_FLAGS="-DEXCEPTIONS_ENABLE=ON -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers/rdk/iarmbus -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/mocks -I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/mocks/thunder -Wall -Werror -Wno-error=format -Wl,-wrap,system -Wl,-wrap,popen -Wl,-wrap,syslog -DDISABLE_SECURITY_TOKEN -DTHUNDER_VERSION=4 -DTHUNDER_VERSION_MAJOR=4 -DTHUNDER_VERSION_MINOR=4" \
-
+-DCMAKE_CXX_FLAGS="-DEXCEPTIONS_ENABLE=ON \
+-I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers \
+-I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/headers/rdk/iarmbus \
+-I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/mocks \
+-I ${GITHUB_WORKSPACE}/entservices-testframework/Tests/mocks/thunder \
+-Wall -Werror -Wno-error=format \
+-Wl,-wrap,system -Wl,-wrap,popen -Wl,-wrap,syslog \
+-DDISABLE_SECURITY_TOKEN  -DTHUNDER_VERSION=4 -DTHUNDER_VERSION_MAJOR=4 -DTHUNDER_VERSION_MINOR=4" \
 
 cmake --build build/entservices-resourcemanager --target install
 echo "======================================================================================"
