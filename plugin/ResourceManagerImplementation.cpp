@@ -38,6 +38,11 @@ static std::string sThunderSecurityToken;
 #endif
 
 namespace Thunder {
+#if defined(THUNDER_VERSION) && (THUNDER_VERSION <= 4)
+        using ThunderDispatcher = ::WPEFramework::PluginHost::ILocalDispatcher;
+#else
+        using ThunderDispatcher = ::Thunder::PluginHost::IDispatcher;
+#endif
     namespace Plugin {
 
         SERVICE_REGISTRATION(ResourceManagerImplementation, 1, 0, 0);
@@ -221,7 +226,7 @@ namespace Thunder {
     private:
       uint32_t mId { 0 };
       std::string mCallSign { };
-      PluginHost::IDispatcher * dispatcher_ {nullptr};
+      ThunderDispatcher * dispatcher_ {nullptr};
 
       Core::ProxyType<Core::JSONRPC::Message> Message() const
       {
@@ -270,7 +275,7 @@ namespace Thunder {
         : mCallSign(callsign)
       {
         if (service)
-          dispatcher_ = service->QueryInterfaceByCallsign<PluginHost::IDispatcher>(mCallSign);
+          dispatcher_ = service->QueryInterfaceByCallsign<ThunderDispatcher>(mCallSign);
       }
   
       JSONRPCDirectLink(PluginHost::IShell* service)
@@ -305,7 +310,16 @@ namespace Thunder {
         uint32_t result = Core::ERROR_BAD_REQUEST;
 
         if (dispatcher_  != nullptr) {
-            result =  dispatcher_->Invoke(channelId, message->Id.Value(), sThunderSecurityToken, message->Designator.Value(), message->Parameters.Value(),output);
+#if defined(THUNDER_VERSION) && (THUNDER_VERSION <= 4)
+            PluginHost::ILocalDispatcher* localDispatcher = dispatcher_->Local();
+
+            ASSERT(localDispatcher != nullptr);
+
+            if (localDispatcher != nullptr)
+#endif
+            {
+                result =  dispatcher_->Invoke(channelId, message->Id.Value(), sThunderSecurityToken, message->Designator.Value(), message->Parameters.Value(),output);
+            }
         }
 
         if (message.IsValid() == true) {
