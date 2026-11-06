@@ -67,13 +67,23 @@ namespace WPEFramework {
         mDisableReserveTTS = true;
 
         RFC_ParamData_t blacklistParam{};
-        if (true == Utils::getRFCConfig("Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Resourcemanager.Blacklist.Enable", blacklistParam)) {
-            mDisableBlacklist = ((blacklistParam.type == WDMP_BOOLEAN) && (strncasecmp(blacklistParam.value, "false", 5) == 0));
+        bool boolBlacklistParam = Utils::getRFCConfig("Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Resourcemanager.Blacklist.Enable", blacklistParam);
+        if (true == boolBlacklistParam) {
+            std::cout << "Anoojc RFC Blacklist disabled: blacklistParam.type int : " << blacklistParam.type << "WDMP_BOOLEAN : " << WDMP_BOOLEAN << std::endl;
+            std::cout << "Anoojc RFC Blacklist disabled: blacklistParam.value : " << blacklistParam.value << std::endl;
+            mDisableBlacklist = ((strncasecmp(blacklistParam.value, "false", 5) == 0));
+        } else {
+            std::cout << "Anoojc RFC Blacklist disabled: boolBlacklistParam : " << boolBlacklistParam << std::endl;
         }
 
         RFC_ParamData_t reserveTTSParam{};
-        if (true == Utils::getRFCConfig("Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Resourcemanager.ReserveTTS.Enable", reserveTTSParam)) {
-            mDisableReserveTTS = ((reserveTTSParam.type == WDMP_BOOLEAN) && (strncasecmp(reserveTTSParam.value, "false", 5) == 0));
+        bool boolReserveTTSParam = Utils::getRFCConfig("Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.Resourcemanager.ReserveTTS.Enable", reserveTTSParam);
+        if (true == boolReserveTTSParam) {
+            std::cout << "Anoojc RFC ReserveTTS disabled : reserveTTSParam.type int : " << reserveTTSParam.type << "WDMP_BOOLEAN : " << WDMP_BOOLEAN << std::endl;
+            std::cout << "RFC ReserveTTS disabled: reserveTTSParam.value : "<< reserveTTSParam.value << std::endl;
+            mDisableReserveTTS = ((strncasecmp(reserveTTSParam.value, "false", 5) == 0));
+        } else {
+            std::cout << "Anoojc RFC ReserveTTS disabled : boolReserveTTSParam : " << boolReserveTTSParam << std::endl;
         }
 
         std::cout << "RFC Blacklist disabled: " << std::boolalpha << mDisableBlacklist << std::endl;
