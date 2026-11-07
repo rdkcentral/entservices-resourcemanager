@@ -94,7 +94,6 @@ else()
         PRIVATE
             CompileSettingsDebug::CompileSettingsDebug
             ${NAMESPACE}Plugins::${NAMESPACE}Plugins
-            -lessosrmgr
             ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
 endif()
 
