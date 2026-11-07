@@ -107,15 +107,13 @@ namespace WPEFramework {
         result.success = false;
 
         _adminLock.Lock();
-
+#ifdef ENABLE_ERM
         try {
             // Check if ERM is available and blacklist is not disabled
             if ((nullptr != mEssRMgr) && (false == mDisableBlacklist)) {
-                
                 std::cout << "appid: " << appid << std::endl;
                 std::cout << "blocked: " << std::boolalpha << blocked << std::endl;
 
-#ifdef ENABLE_ERM
                 bool status = blocked ? 
                     EssRMgrAddToBlackList(mEssRMgr, appid.c_str()) : 
                     EssRMgrRemoveFromBlackList(mEssRMgr, appid.c_str());
@@ -130,12 +128,7 @@ namespace WPEFramework {
                 } else {
                     LOGERR("ERM failed to %s application: %s", blocked ? "block" : "unblock", appid.c_str());
                     retVal = Core::ERROR_GENERAL;
-                }
-#else
-                LOGERR("ENABLE_ERM not defined");
-                retVal = Core::ERROR_UNAVAILABLE;
-#endif
-                
+                }                
             } else {
                 // ERM not available or blacklist disabled
                 std::string infoMessage = (mDisableBlacklist) ? "Blacklist RFC is disabled" : "ERM not enabled";
@@ -148,7 +141,10 @@ namespace WPEFramework {
             LOGERR("Exception in SetAVBlocked: %s", e.what());
             retVal = Core::ERROR_GENERAL;
         }
-        
+#else
+        LOGERR("ENABLE_ERM not defined");
+        retVal = Core::ERROR_UNAVAILABLE;
+#endif        
         _adminLock.Unlock();
 
         return retVal;
@@ -163,14 +159,13 @@ namespace WPEFramework {
         success = false;
 
         _adminLock.Lock();
-
+#ifdef ENABLE_ERM
         try {
             if (nullptr != mEssRMgr) {
                 std::list<string> blockedApps;
                 
                 std::cout << "iterating mAppsAVBlacklistStatus ..." << std::endl;
                 
-#ifdef ENABLE_ERM
                 // Iterate through the blacklist status map
                 std::map<std::string, bool>::const_iterator appsItr = mAppsAVBlacklistStatus.begin();
                 for (; appsItr != mAppsAVBlacklistStatus.end(); appsItr++) {
@@ -196,11 +191,6 @@ namespace WPEFramework {
                     success = true;
                     LOGINFO("No blocked applications found");
                 }
-#else
-                LOGERR("ENABLE_ERM not defined");
-                result = Core::ERROR_UNAVAILABLE;
-#endif
-                
             } else {
                 LOGERR("ERM not enabled");
                 result = Core::ERROR_UNAVAILABLE;
@@ -209,7 +199,10 @@ namespace WPEFramework {
             LOGERR("Exception in GetBlockedAVApplications: %s", e.what());
             result = Core::ERROR_GENERAL;
         }
-
+#else
+        LOGERR("ENABLE_ERM not defined");
+        result = Core::ERROR_UNAVAILABLE;
+#endif
         _adminLock.Unlock();
 
         return result;
