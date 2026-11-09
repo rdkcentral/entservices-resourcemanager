@@ -11,7 +11,7 @@ When adding a new plugin in `CMakeLists.txt`, you **must** also update the follo
 - **CI Workflow Files:**  
   - `L1-tests.yml`
   - `L2-tests.yml`
-  - `L2-tests-oop.yml`
+  - `tests-trigger.yml` (if it forwards/dispatches test workflows)
 - **Coverity Build Script:**  
   - `cov_build.sh`
 
@@ -43,7 +43,7 @@ When adding a new plugin in `CMakeLists.txt`, you **must** also update the follo
 
 3. **Update Test Workflow YAMLs**
 
-   Ensure each test workflow references your new plugin using the **DPLUGIN_<PLUGINNAME>** CMake flag in their build/test step. For example, in `L1-tests.yml`:
+  Ensure each test workflow references your new plugin using the **-DPLUGIN_<PLUGINNAME>** CMake flag in their build/test step. For example, in `L1-tests.yml`:
    ```yaml
    jobs:
      build-test:
@@ -59,9 +59,9 @@ When adding a new plugin in `CMakeLists.txt`, you **must** also update the follo
            run: |
              ctest
    ```
-   Repeat similar additions in `L2-tests.yml` and `L2-tests-oop.yml`.
+    Repeat similar additions in `L2-tests.yml` and ensure trigger/dispatcher workflows (for example, `tests-trigger.yml`) remain compatible.
 
 **Summary:**  
 Whenever a new plugin is registered via `CMakeLists.txt`, always update:
 - `cov_build.sh` (add plugin flag to Coverity scan build step)
-- All test CI workflows (`L1-tests.yml`, `L2-tests.yml`, `L2-tests-oop.yml`) to include your plugin flag so that your plugin’s code quality and tests are assured!
+- All test CI workflows (`L1-tests.yml`, `L2-tests.yml`, and any trigger workflow like `tests-trigger.yml`) to include or forward your plugin flag so that your plugin’s code quality and tests are assured!
