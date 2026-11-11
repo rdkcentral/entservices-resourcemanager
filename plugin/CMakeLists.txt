@@ -27,6 +27,7 @@ set(PLUGIN_RESOURCE_MANAGER_STARTUPORDER "" CACHE STRING "To configure startup o
 find_package(${NAMESPACE}Plugins REQUIRED)
 find_package(${NAMESPACE}Definitions REQUIRED)
 find_package(CompileSettingsDebug CONFIG REQUIRED)
+find_package(${NAMESPACE}Helpers CONFIG REQUIRED)
 
 add_library(${MODULE_NAME} SHARED
         ResourceManager.cpp
@@ -46,7 +47,8 @@ target_link_libraries(${MODULE_NAME}
     PRIVATE
         CompileSettingsDebug::CompileSettingsDebug
         ${NAMESPACE}Plugins::${NAMESPACE}Plugins
-        ${NAMESPACE}Definitions::${NAMESPACE}Definitions)
+        ${NAMESPACE}Definitions::${NAMESPACE}Definitions
+        ${NAMESPACE}::${NAMESPACE}Helpers)
 
 install(TARGETS ${MODULE_NAME}
     DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/${STORAGE_DIRECTORY}/plugins)
@@ -88,12 +90,14 @@ if (RDK_SERVICES_L1_TEST OR RDK_SERVICE_L2_TEST)
         PRIVATE
             CompileSettingsDebug::CompileSettingsDebug
             ${NAMESPACE}Plugins::${NAMESPACE}Plugins
+            ${NAMESPACE}::${NAMESPACE}Helpers
             ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
 else()
     target_link_libraries(${PLUGIN_IMPLEMENTATION}
         PRIVATE
             CompileSettingsDebug::CompileSettingsDebug
             ${NAMESPACE}Plugins::${NAMESPACE}Plugins
+            ${NAMESPACE}::${NAMESPACE}Helpers
             -lessosrmgr
             ${PLUGIN_RESOURCE_MANAGER_EXTRA_LIBRARIES})
 endif()
