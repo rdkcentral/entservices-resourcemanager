@@ -96,7 +96,25 @@ cmake -G Ninja -S entservices-apis  -B build/entservices-apis \
 
 cmake --build build/entservices-apis --target install
 
-
+############################
+# Create stub essosrmgr library only if it doesn't exist
+echo "======================================================================================"
+echo "Checking for essosrmgr library..."
+if ! ldconfig -p 2>/dev/null | grep -q libessosrmgr; then
+    echo "essosrmgr library not found, creating stub"
+    
+    echo "" | gcc -shared -o /usr/lib/libessosrmgr.so -x c -
+    ldconfig 
+    echo "Stub created at /usr/lib/libessosrmgr.so"
+    
+    mkdir -p "$GITHUB_WORKSPACE/install/usr/lib"
+    cp /usr/lib/libessosrmgr.so "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
+    
+    ls -la /usr/lib/libessosrmgr.so "$GITHUB_WORKSPACE/install/usr/lib/libessosrmgr.so"
+else
+    echo "essosrmgr library already found in linker cache, skipping stub creation"
+fi
+echo "======================================================================================"
 
 ############################
 # Generate minimal external headers for ResourceManager/L1 test builds
